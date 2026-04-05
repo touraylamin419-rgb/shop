@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Catch The Money</title>
+
+<style>
+
+body{
+background:#111;
+color:white;
+text-align:center;
+font-family:Arial;
+}
+
+#menu{
+margin-top:50px;
+}
+
+button{
+padding:10px 20px;
+margin:5px;
+font-size:18px;
+cursor:pointer;
+}
+
+#game{
+display:none;
+width:350px;
+height:500px;
+background:#222;
+margin:auto;
+position:relative;
+overflow:hidden;
+border-radius:10px;
+}
+
+.coin{
+font-size:40px;
+position:absolute;
+cursor:pointer;
+}
+
+#score,#level,#timer{
+margin:5px;
+font-size:20px;
+}
+
+</style>
+</head>
+
+<body>
+
+<h1>💰 Catch The Money</h1>
+
+<div id="menu">
+
+<h2>Selecciona un nivel</h2>
+
+<div id="levels"></div>
+
+</div>
+
+<div id="game"></div>
+
+<div id="hud" style="display:none">
+<div id="level"></div>
+<div id="score"></div>
+<div id="timer"></div>
+</div>
+
+<script>
+
+let coins = 0
+let level = 1
+let speed = 2
+let timeLeft = 60
+
+let game = document.getElementById("game")
+let menu = document.getElementById("menu")
+
+function createMenu(){
+
+for(let i=1;i<=10;i++){
+
+let btn = document.createElement("button")
+btn.innerText = "Nivel " + i
+
+btn.onclick = function(){
+startLevel(i)
+}
+
+document.getElementById("levels").appendChild(btn)
+
+}
+
+}
+
+function startLevel(selectedLevel){
+
+level = selectedLevel
+coins = 0
+timeLeft = 60
+speed = 2 + level
+
+menu.style.display="none"
+game.style.display="block"
+document.getElementById("hud").style.display="block"
+
+document.getElementById("level").innerHTML="Nivel: "+level
+document.getElementById("score").innerHTML="Monedas: 0 / 50"
+
+}
+
+function spawnCoin(){
+
+if(game.style.display=="none") return
+
+let coin = document.createElement("div")
+coin.classList.add("coin")
+coin.innerHTML="💰"
+
+coin.style.left=Math.random()*300+"px"
+coin.style.top="0px"
+
+game.appendChild(coin)
+
+let fall=setInterval(()=>{
+
+let top=parseInt(coin.style.top)
+
+coin.style.top=top+speed+"px"
+
+if(top>450){
+
+coin.remove()
+clearInterval(fall)
+
+}
+
+},30)
+
+coin.onclick=function(){
+
+coins++
+
+document.getElementById("score").innerHTML="Monedas: "+coins+" / 50"
+
+coin.remove()
+clearInterval(fall)
+
+if(coins>=50){
+
+alert("Nivel completado 🎉")
+location.reload()
+
+}
+
+}
+
+}
+
+setInterval(spawnCoin,1000)
+
+setInterval(()=>{
+
+if(game.style.display=="none") return
+
+timeLeft--
+
+document.getElementById("timer").innerHTML="Tiempo: "+timeLeft
+
+if(timeLeft<=0){
+
+alert("Game Over 😢")
+location.reload()
+
+}
+
+},1000)
+
+createMenu()
+
+</script>
+
+</body>
+</html>
